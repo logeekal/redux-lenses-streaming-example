@@ -3,6 +3,7 @@ import { createLogger } from 'redux-logger';
 
 import { rootReducer } from '../reducers';
 import { Action } from '../actions';
+import thunk from 'redux-thunk';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?? compose;
 
@@ -12,7 +13,7 @@ export const configureStore = () => {
     predicate: (_, action: Action) => action.type !== 'UPDATE_PASSWORD'
   });
   
-  const middleware = [logger];
+  const middleware = [logger, thunk];
   
   return createStore(
     rootReducer,

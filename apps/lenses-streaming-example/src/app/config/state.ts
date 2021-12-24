@@ -9,6 +9,8 @@ export type SessionState = {
     user: string;
     password: string;
     message?: Message;
+    token: undefined | string,
+    loginStatus: boolean
 }
 
 export type State = {

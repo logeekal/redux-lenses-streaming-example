@@ -1,10 +1,11 @@
 import React from "react";
-import { connect, MapStateToProps } from "react-redux";
+import { connect, ConnectedProps, MapStateToProps } from "react-redux";
 
 import Connect from "../components/Connect";
 import Subscribe from "../components/Subscribe";
 import MessageList from "../components/MessageList";
 import { Message, State } from "../config/state";
+import {actions, doLogin} from "../actions";
 
 export type MainContainerProps = {
   commit: (message: Message) => void;
@@ -12,14 +13,15 @@ export type MainContainerProps = {
 
 export type MainContainerStateProps = {
   messages: Message[];
+  loginStatus: boolean
 };
 
-const _MainContainer: React.FC<MainContainerProps & MainContainerStateProps> =
-  ({ messages, commit }) => (
+const _MainContainer: React.FC<MainContainerProps & MainContainerReduxProps > =
+  ({ messages, commit, doLogin }) => (
     <div className="container app">
       <div className="columns">
         <div className="column">
-          <Connect onLogin={()=> ({})} />
+          <Connect onLogin={()=> doLogin()} />
         </div>
       </div>
       <div className="columns">
@@ -33,12 +35,22 @@ const _MainContainer: React.FC<MainContainerProps & MainContainerStateProps> =
     </div>
   );
 
+  const mapDispatchToProps = {
+    ...actions,
+    doLogin
+  }
+
 const mapStateToProps: MapStateToProps<
   MainContainerStateProps,
   MainContainerProps,
   State
 > = (state: State) => ({
   messages: state.session.messages,
+  loginStatus: state.session.loginStatus
 });
 
-export const MainContainer = connect(mapStateToProps)(_MainContainer);
+const connector = connect(mapStateToProps, mapDispatchToProps)
+
+type MainContainerReduxProps = ConnectedProps<typeof connector>
+
+export const MainContainer = connector(_MainContainer);

@@ -1,31 +1,45 @@
-import { Reducer } from 'redux'
+import { Reducer } from "redux";
 
-import { SessionState } from "../config/state"
-import { Action } from "../actions"
+import { SessionState } from "../config/state";
+import { Action } from "../actions";
 
 export const INITIAL_STATE: SessionState = {
   heartbeatCount: 0,
   messages: [],
-  host: '',
-  user: '',
-  password: '',
+  host: "",
+  user: "",
+  password: "",
+  token: undefined,
+  loginStatus: false,
 };
 
-export const sessionReducer: Reducer<SessionState, Action> = (state = INITIAL_STATE, action) => {
+export const sessionReducer: Reducer<SessionState, Action> = (
+  state = INITIAL_STATE,
+  action
+) => {
   switch (action.type) {
-    case 'UPDATE_HOST':
+    case "UPDATE_HOST":
       return { ...state, host: action.payload };
-    case 'UPDATE_USER':
+    case "UPDATE_USER":
       return { ...state, user: action.payload };
-    case 'UPDATE_PASSWORD':
+    case "UPDATE_PASSWORD":
       return { ...state, password: action.payload };
-    case 'CLEAR_MESSAGES':
+    case "UPDATE_TOKEN":
+      return { ...state, token: action.payload}
+    case "UPDATE_LOGIN_STATUS":
+      return { ...state, loginStatus: action.payload };
+    case "CLEAR_MESSAGES":
       return { ...state, messages: [] };
-    case 'SHOW_ROW_DETAILS':
+    case "SHOW_ROW_DETAILS":
       return { ...state, message: action.payload };
-    case 'MESSAGE_RECEIVED':
+    case "MESSAGE_RECEIVED":
       return { ...state, messages: [...state.messages, action.payload] };
+    case "LOGOUT":
+      return {
+        ...state,
+        ...INITIAL_STATE,
+      };
     default:
       return state;
   }
-}
+};
