@@ -54,6 +54,12 @@ export const logout = () =>
     payload: "",
   } as const);
 
+export const setConnection = (payload: WebSocket) =>
+  ({
+    type: "CONN",
+    payload,
+  } as const);
+
 export const actions = {
   updateHost,
   updateUser,
@@ -64,16 +70,38 @@ export const actions = {
   updateToken,
   updateLoginState,
   logout,
+  setConnection,
 };
 
 export type Action = ReturnType<typeof actions[keyof typeof actions]>;
 
+// async action creators
+export const openConnection =
+  (path: string, payload: string): ThunkAction<void, State, unknown, Action> =>
+  (dispatch, getState) => {
+    const {
+      session: { host },
+    } = getState();
+    const conn = new WebSocket(`ws:\/\/${host}/${path}`);
+    conn.onopen = () => {
+      conn.send(payload);
+    };
+    conn.onmessage = (message) => {
+      const data = JSON.parse(message.data);
+      if (data.type === "RECORD") {
+        dispatch(messageReceived(data.data));
+      }
+    };
+    dispatch(setConnection(conn));
+  };
+
+// async action creators
 export const doLogin =
   (): ThunkAction<void, State, unknown, Action> =>
   async (dispatch, getState) => {
     const { session } = getState();
     try {
-      const response = await fetch("http://localhost:3030/api/login", {
+      const response = await fetch(`http:\/\/${session.host}/api/login`, {
         method: "POST",
         body: JSON.stringify({
           user: session.user,
@@ -86,7 +114,7 @@ export const doLogin =
 
       const token = await response.text();
       dispatch(updateToken(token));
-      dispatch(updateLoginState(true))
+      dispatch(updateLoginState(true));
     } catch (e) {
       dispatch(updateLoginState(false));
     }

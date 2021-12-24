@@ -6,11 +6,12 @@ import { Action } from "../actions";
 export const INITIAL_STATE: SessionState = {
   heartbeatCount: 0,
   messages: [],
-  host: "",
+  host: "localhost:3030",
   user: "",
   password: "",
   token: undefined,
   loginStatus: false,
+  conn: undefined
 };
 
 export const sessionReducer: Reducer<SessionState, Action> = (
@@ -25,7 +26,7 @@ export const sessionReducer: Reducer<SessionState, Action> = (
     case "UPDATE_PASSWORD":
       return { ...state, password: action.payload };
     case "UPDATE_TOKEN":
-      return { ...state, token: action.payload}
+      return { ...state, token: action.payload };
     case "UPDATE_LOGIN_STATUS":
       return { ...state, loginStatus: action.payload };
     case "CLEAR_MESSAGES":
@@ -34,6 +35,8 @@ export const sessionReducer: Reducer<SessionState, Action> = (
       return { ...state, message: action.payload };
     case "MESSAGE_RECEIVED":
       return { ...state, messages: [...state.messages, action.payload] };
+    case "CONN":
+      return {...state, conn: action.payload};
     case "LOGOUT":
       return {
         ...state,

@@ -40,8 +40,8 @@ const ListItemDetails: React.FC<ListItemDetailsProps> = ({
 
   const { value } = message;
   if (value) {
-    Object.keys(JSON.parse(value)).forEach(function (k) {
-      arr.push({ label: k, value: JSON.parse(value)[k] });
+    Object.keys(value).forEach(function (k) {
+      arr.push({ label: k, value: value[k] });
     });
   }
   return (

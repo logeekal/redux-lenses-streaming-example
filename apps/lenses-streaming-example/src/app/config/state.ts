@@ -10,7 +10,8 @@ export type SessionState = {
     password: string;
     message?: Message;
     token: undefined | string,
-    loginStatus: boolean
+    loginStatus: boolean,
+    conn: undefined | WebSocket
 }
 
 export type State = {

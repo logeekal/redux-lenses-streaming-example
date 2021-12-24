@@ -5,7 +5,7 @@ import Connect from "../components/Connect";
 import Subscribe from "../components/Subscribe";
 import MessageList from "../components/MessageList";
 import { Message, State } from "../config/state";
-import {actions, doLogin} from "../actions";
+import { actions, doLogin } from "../actions";
 
 export type MainContainerProps = {
   commit: (message: Message) => void;
@@ -13,32 +13,36 @@ export type MainContainerProps = {
 
 export type MainContainerStateProps = {
   messages: Message[];
-  loginStatus: boolean
+  loginStatus: boolean;
 };
 
-const _MainContainer: React.FC<MainContainerProps & MainContainerReduxProps > =
-  ({ messages, commit, doLogin }) => (
+const _MainContainer: React.FC<MainContainerProps & MainContainerReduxProps> =
+  ({ messages, commit, doLogin, loginStatus }) => (
     <div className="container app">
       <div className="columns">
         <div className="column">
-          <Connect onLogin={()=> doLogin()} />
+          <Connect onLogin={() => doLogin()} />
         </div>
       </div>
-      <div className="columns">
-        <div className="column">
-          <Subscribe />
-          {messages.length ? (
-            <MessageList messages={messages} onCommitMessage={commit} />
-          ) : null}
+      {loginStatus ? (
+        <div className="columns">
+          <div className="column">
+            <Subscribe path={"api/ws/v2/sql/execute"} maxRecords={10} />
+            {messages.length ? (
+              <MessageList messages={messages} onCommitMessage={commit} />
+            ) : null}
+          </div>
         </div>
-      </div>
+      ) : (
+        <></>
+      )}
     </div>
   );
 
-  const mapDispatchToProps = {
-    ...actions,
-    doLogin
-  }
+const mapDispatchToProps = {
+  ...actions,
+  doLogin,
+};
 
 const mapStateToProps: MapStateToProps<
   MainContainerStateProps,
@@ -46,11 +50,11 @@ const mapStateToProps: MapStateToProps<
   State
 > = (state: State) => ({
   messages: state.session.messages,
-  loginStatus: state.session.loginStatus
+  loginStatus: state.session.loginStatus,
 });
 
-const connector = connect(mapStateToProps, mapDispatchToProps)
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
-type MainContainerReduxProps = ConnectedProps<typeof connector>
+type MainContainerReduxProps = ConnectedProps<typeof connector>;
 
 export const MainContainer = connector(_MainContainer);
