@@ -1,5 +1,5 @@
 import { ThunkAction } from "redux-thunk";
-import { Message, State } from "../config/state";
+import { AuthStatus, Message, State } from "../config/state";
 
 export const updateHost = (payload: string) =>
   ({
@@ -42,10 +42,16 @@ export const updateToken = (token: string | undefined) =>
     payload: token,
   } as const);
 
-export const updateLoginState = (status: boolean) =>
+export const updateLoginState = (
+  status: AuthStatus["status"],
+  error: AuthStatus["error"]
+) =>
   ({
     type: "UPDATE_LOGIN_STATUS",
-    payload: status,
+    payload: {
+      status,
+      error,
+    },
   } as const);
 
 export const logout = () =>
@@ -112,10 +118,25 @@ export const doLogin =
         },
       });
 
-      const token = await response.text();
-      dispatch(updateToken(token));
-      dispatch(updateLoginState(true));
+      if (response.ok) {
+        const token = await response.text();
+        dispatch(updateToken(token));
+        dispatch(updateLoginState("SUCCESS", undefined));
+      } else {
+        switch (response.status) {
+          case 401:
+            dispatch(
+              updateLoginState(
+                "FAILED",
+                "Invalid Credentials. Please try again"
+              )
+            );
+            break;
+          default:
+            dispatch(updateLoginState("FAILED", "Unknown Error Occured"));
+        }
+      }
     } catch (e) {
-      dispatch(updateLoginState(false));
+      dispatch(updateLoginState("FAILED", "Unknown Error occured"));
     }
   };

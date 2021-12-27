@@ -2,6 +2,11 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Message = any;
 
+export interface AuthStatus {
+    status: "SUCCESS" | "FAILED" | "IDLE",
+    error: undefined | string
+}
+
 export type SessionState = {
     heartbeatCount: number;
     messages: Message[];
@@ -10,7 +15,7 @@ export type SessionState = {
     password: string;
     message?: Message;
     token: undefined | string,
-    loginStatus: boolean,
+    auth: AuthStatus,
     conn: undefined | WebSocket
 }
 

@@ -13,10 +13,9 @@ export type MainContainerProps = {
 
 export type MainContainerStateProps = {
   messages: Message[];
-  loginStatus: boolean;
 };
 
-const _MainContainer: React.FC<MainContainerProps & MainContainerReduxProps> =
+const _MainContainer: React.FC<MainContainerProps & MainContainerStateProps & MainContainerReduxProps> =
   ({ messages, commit, doLogin, loginStatus }) => (
     <div className="container app">
       <div className="columns">
@@ -24,7 +23,7 @@ const _MainContainer: React.FC<MainContainerProps & MainContainerReduxProps> =
           <Connect onLogin={() => doLogin()} />
         </div>
       </div>
-      {loginStatus ? (
+      {loginStatus  == "SUCCESS" ? (
         <div className="columns">
           <div className="column">
             <Subscribe path={"api/ws/v2/sql/execute"} maxRecords={10} />
@@ -44,13 +43,9 @@ const mapDispatchToProps = {
   doLogin,
 };
 
-const mapStateToProps: MapStateToProps<
-  MainContainerStateProps,
-  MainContainerProps,
-  State
-> = (state: State) => ({
+const mapStateToProps = (state: State) => ({
   messages: state.session.messages,
-  loginStatus: state.session.loginStatus,
+  loginStatus: state.session.auth.status,
 });
 
 const connector = connect(mapStateToProps, mapDispatchToProps);

@@ -2,7 +2,7 @@ import React from "react";
 import { connect, ConnectedProps } from "react-redux";
 import classnames from "classnames";
 import Button from "./Button";
-import { actions} from "../actions";
+import { actions } from "../actions";
 import { State } from "../config/state";
 
 export type ConnectStateProps = {
@@ -31,8 +31,8 @@ const _Connect: React.FC<ConnectProps & ConnectStateProps & ConnectReduxProps> =
     updateUser,
     updatePassword,
     onLogin,
-    loginStatus,
-    logout
+    auth,
+    logout,
   }) => {
     const onInputChange = (event: React.SyntheticEvent<HTMLInputElement>) => {
       const target = event.currentTarget;
@@ -81,7 +81,7 @@ const _Connect: React.FC<ConnectProps & ConnectStateProps & ConnectReduxProps> =
             Heartbeat Count: {heartbeatCount}
           </p>
         </div>
-        {loginStatus ? (
+        {auth.status == "SUCCESS" ? (
           <div className="panel-block">
             <Button
               onClick={() => logout()}
@@ -126,6 +126,16 @@ const _Connect: React.FC<ConnectProps & ConnectStateProps & ConnectReduxProps> =
                 </p>
               </div>
             </div>
+            {auth.status === "FAILED" ? (
+              <div
+                className="panel-block"
+                style={{ color: "red", fontSize: "0.8rem", marginLeft:"0.25em", paddingTop: "0px" }}
+              >
+                <p className="has-icons-left"> {auth.error} </p>
+              </div>
+            ) : (
+              <></>
+            )}
             <div className="panel-block">
               <Button
                 onClick={onLogin}
@@ -149,7 +159,7 @@ const mapStateToProps = (state: State) => ({
   host: state.session.host,
   user: state.session.user,
   password: state.session.password,
-  loginStatus: state.session.loginStatus,
+  auth: state.session.auth,
 });
 
 const reduxConnector = connect(mapStateToProps, mapDispatchToProps);

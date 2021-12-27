@@ -10,8 +10,11 @@ export const INITIAL_STATE: SessionState = {
   user: "",
   password: "",
   token: undefined,
-  loginStatus: false,
-  conn: undefined
+  auth: {
+    status: "IDLE",
+    error: undefined,
+  },
+  conn: undefined,
 };
 
 export const sessionReducer: Reducer<SessionState, Action> = (
@@ -28,7 +31,12 @@ export const sessionReducer: Reducer<SessionState, Action> = (
     case "UPDATE_TOKEN":
       return { ...state, token: action.payload };
     case "UPDATE_LOGIN_STATUS":
-      return { ...state, loginStatus: action.payload };
+      return {
+        ...state,
+        auth: {
+          ...action.payload,
+        },
+      };
     case "CLEAR_MESSAGES":
       return { ...state, messages: [] };
     case "SHOW_ROW_DETAILS":
@@ -36,7 +44,7 @@ export const sessionReducer: Reducer<SessionState, Action> = (
     case "MESSAGE_RECEIVED":
       return { ...state, messages: [...state.messages, action.payload] };
     case "CONN":
-      return {...state, conn: action.payload};
+      return { ...state, conn: action.payload };
     case "LOGOUT":
       return {
         ...state,
