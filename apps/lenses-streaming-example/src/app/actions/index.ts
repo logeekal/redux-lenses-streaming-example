@@ -85,9 +85,10 @@ export type Action = ReturnType<typeof actions[keyof typeof actions]>;
 export const openConnection =
   (path: string, payload: string): ThunkAction<void, State, unknown, Action> =>
   (dispatch, getState) => {
-    const {
-      session: { host },
+  const {
+    session: { host, conn : mainConnection },
     } = getState();
+    if(mainConnection) mainConnection.close()
     const conn = new WebSocket(`ws:\/\/${host}/${path}`);
     conn.onopen = () => {
       conn.send(payload);

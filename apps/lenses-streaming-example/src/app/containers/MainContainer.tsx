@@ -26,7 +26,7 @@ const _MainContainer: React.FC<MainContainerProps & MainContainerStateProps & Ma
       {loginStatus  == "SUCCESS" ? (
         <div className="columns">
           <div className="column">
-            <Subscribe path={"api/ws/v2/sql/execute"} maxRecords={10} />
+            <Subscribe path={"api/ws/v2/sql/execute"} maxRecords={10000} />
             {messages.length ? (
               <MessageList messages={messages} onCommitMessage={commit} />
             ) : null}
